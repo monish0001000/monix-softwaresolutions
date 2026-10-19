@@ -1,198 +1,327 @@
 import React from 'react';
-import { Globe, Smartphone, GraduationCap, Code2, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
+import { motion, useMotionValue, useMotionTemplate } from 'motion/react';
+import {
+  Globe,
+  Palette,
+  Cpu,
+  FileText,
+  Server,
+  Smartphone,
+  ArrowUpRight,
+  Layers,
+  Code2,
+  ShieldCheck,
+  Rocket,
+  ArrowRight
+} from 'lucide-react';
 import { Language, PageView } from '../types';
-import { translations } from '../data/translations';
-import { WEB_CATEGORIES, MOBILE_CATEGORIES, INTERNSHIP_PROGRAMS, PROJECT_CATEGORIES } from '../data/content';
 
-interface ServicesSectionProps {
-  lang: Language;
-  onNavigate: (view: PageView) => void;
-  onOpenInquiryWithService: (service: string, category?: string) => void;
+export interface ServicesSectionProps {
+  lang?: Language;
+  onNavigate?: (view: PageView) => void;
+  onOpenInquiryWithService?: (service: string, category?: string) => void;
 }
 
-export const ServicesSection: React.FC<ServicesSectionProps> = ({
-  lang,
-  onNavigate,
-  onOpenInquiryWithService,
-}) => {
-  const t = translations[lang];
+interface ServiceItem {
+  id: string;
+  title: string;
+  tag: string;
+  impactSentence: string; // Strictly 6-word impact sentence
+  chips: [string, string, string]; // Strictly 3 clean tech chips
+  icon: React.ComponentType<{ className?: string }>;
+  accent: string;
+  view: PageView;
+}
 
-  const services = [
-    {
-      id: 'web',
-      view: 'web-development' as PageView,
-      title: t.webDevTitle,
-      price: t.webDevPrice,
-      icon: Globe,
-      badge: "26+ Categories",
-      desc: "Pixel-perfect, ultra-fast corporate websites, landing pages, custom dashboards, and AI-powered e-commerce stores.",
-      categories: WEB_CATEGORIES.slice(0, 6),
-      totalCount: WEB_CATEGORIES.length,
-      bgGradient: "from-amber-500/10 via-amber-500/5 to-transparent",
-      image: "https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 'mobile',
-      view: 'mobile-applications' as PageView,
-      title: t.mobileAppTitle,
-      price: t.mobileAppPrice,
-      icon: Smartphone,
-      badge: "20+ Categories",
-      desc: "Native Android & iOS apps, Flutter & React Native cross-platform applications with payment gateways and AI features.",
-      categories: MOBILE_CATEGORIES.slice(0, 6),
-      totalCount: MOBILE_CATEGORIES.length,
-      bgGradient: "from-amber-600/10 via-amber-600/5 to-transparent",
-      image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 'internship',
-      view: 'ai-internships' as PageView,
-      title: t.internshipTitle,
-      price: t.internshipSubtitle,
-      icon: GraduationCap,
-      badge: "100% Online & Certified",
-      desc: "Industry-aligned live mentorship programs in AI Full Stack, Cyber Security, Prompt Engineering, Python, and Flutter.",
-      categories: INTERNSHIP_PROGRAMS.slice(0, 6),
-      totalCount: INTERNSHIP_PROGRAMS.length,
-      bgGradient: "from-amber-700/10 via-amber-700/5 to-transparent",
-      image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 'projects',
-      view: 'academic-projects' as PageView,
-      title: t.projectsTitle,
-      price: t.projectsSubtitle,
-      icon: Code2,
-      badge: "Full Code + PPT + Viva",
-      desc: "Turnkey final year major projects, mini projects, IEEE paper implementations for CSE, IT, ECE & AI students.",
-      categories: PROJECT_CATEGORIES,
-      totalCount: PROJECT_CATEGORIES.length,
-      bgGradient: "from-amber-800/10 via-amber-800/5 to-transparent",
-      image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80",
-    },
-  ];
+interface WorkflowPhase {
+  phase: string;
+  title: string;
+  deliverable: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+// 6 Core Services: 1 Headline, 1 Short 6-Word Impact Sentence, 3 Clean Tech Chips
+const SERVICES: ServiceItem[] = [
+  {
+    id: 'web-dev',
+    title: 'Web Development',
+    tag: 'FLAGSHIP',
+    impactSentence: 'High-converting full-stack web platforms shipped fast.',
+    chips: ['Next.js 15', 'React 19', 'Tailwind'],
+    icon: Globe,
+    accent: '#00F2FE',
+    view: 'web-development',
+  },
+  {
+    id: 'ui-ux',
+    title: 'UI/UX Design',
+    tag: 'DESIGN',
+    impactSentence: 'Intuitive design systems with premium aesthetics.',
+    chips: ['Figma', 'Design Systems', 'Motion'],
+    icon: Palette,
+    accent: '#6366F1',
+    view: 'web-development',
+  },
+  {
+    id: 'ai-tech',
+    title: 'AI & Autonomous Systems',
+    tag: 'NEXT-GEN',
+    impactSentence: 'Production-grade AI workflows that automate operations.',
+    chips: ['LLMs', 'FastAPI', 'Vector RAG'],
+    icon: Cpu,
+    accent: '#00F2FE',
+    view: 'ai-internships',
+  },
+  {
+    id: 'mobile-apps',
+    title: 'Mobile Applications',
+    tag: 'MOBILE',
+    impactSentence: 'High-performance native apps for iOS and Android.',
+    chips: ['Flutter', 'React Native', 'Kotlin'],
+    icon: Smartphone,
+    accent: '#10B981',
+    view: 'mobile-applications',
+  },
+  {
+    id: 'custom-software',
+    title: 'Custom Cloud Software',
+    tag: 'ENTERPRISE',
+    impactSentence: 'Scalable cloud microservices with sub-second latency.',
+    chips: ['Docker', 'PostgreSQL', 'Microservices'],
+    icon: Server,
+    accent: '#6366F1',
+    view: 'web-development',
+  },
+  {
+    id: 'project-doc',
+    title: 'Technical Architecture',
+    tag: 'STANDARDS',
+    impactSentence: 'IEEE-compliant architecture blueprints and system schemas.',
+    chips: ['SRS Specs', 'UML / ERD', 'OpenAPI'],
+    icon: FileText,
+    accent: '#00F2FE',
+    view: 'academic-projects',
+  },
+];
+
+// 4 Phases: Ultra-Short Titles and Single-Line Deliverables
+const WORKFLOW_PHASES: WorkflowPhase[] = [
+  {
+    phase: '01',
+    title: 'Blueprints',
+    deliverable: 'SRS Architecture & Schema Specifications',
+    icon: Layers,
+  },
+  {
+    phase: '02',
+    title: 'Core Build',
+    deliverable: 'Modular Clean Code & Tested APIs',
+    icon: Code2,
+  },
+  {
+    phase: '03',
+    title: 'Security',
+    deliverable: 'Zero-Defect Audit & Hardened SSL',
+    icon: ShieldCheck,
+  },
+  {
+    phase: '04',
+    title: 'Launch',
+    deliverable: 'Global Edge CDN & Instant Deployment',
+    icon: Rocket,
+  },
+];
+
+// Apple/Linear Minimalist Service Card
+const ServiceCard: React.FC<{
+  service: ServiceItem;
+  onNavigate?: (view: PageView) => void;
+  onOpenInquiry?: (service: string) => void;
+}> = ({ service, onNavigate, onOpenInquiry }) => {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent<HTMLDivElement>) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
+  const Icon = service.icon;
 
   return (
-    <section id="services" className="py-10 sm:py-20 bg-white border-y border-amber-500/10 relative">
-      <div className="w-full max-w-[90rem] 2xl:max-w-[105rem] mx-auto px-4 sm:px-6 md:px-10 lg:px-12 transition-all duration-300">
-        
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-16 space-y-2 sm:space-y-3">
-          <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-amber-600 bg-amber-500/10 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full border border-amber-500/20">
-            Digital Transformation
+    <div
+      onMouseMove={handleMouseMove}
+      onClick={() => {
+        if (onOpenInquiry) {
+          onOpenInquiry(service.title);
+        } else if (onNavigate) {
+          onNavigate(service.view);
+        }
+      }}
+      className="group relative rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-4.5 bg-[#0B0F19]/80 backdrop-blur-xl border border-white/10 hover:border-[#00F2FE]/40 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.4)] hover:-translate-y-1 cursor-pointer"
+    >
+      {/* Subtle Cursor Spotlight Tracking Layer */}
+      <motion.div
+        className="pointer-events-none absolute -inset-px rounded-xl lg:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{
+          background: useMotionTemplate`
+            radial-gradient(
+              240px circle at ${mouseX}px ${mouseY}px,
+              rgba(0, 242, 254, 0.15),
+              transparent 70%
+            )
+          `,
+        }}
+      />
+
+      <div>
+        {/* Top Header: Icon & Micro Tag */}
+        <div className="flex items-center justify-between mb-2 sm:mb-3">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#00F2FE] group-hover:scale-105 group-hover:border-[#00F2FE]/40 group-hover:shadow-[0_0_15px_rgba(0,242,254,0.3)] transition-all duration-300">
+            <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          </div>
+          <span className="font-mono text-[9px] sm:text-[10px] tracking-widest uppercase px-2 py-0.5 rounded-full bg-white/5 text-slate-400 border border-white/5 group-hover:text-[#00F2FE] group-hover:border-[#00F2FE]/30 transition-colors">
+            {service.tag}
           </span>
-          <h2 className="font-cinzel text-2xl sm:text-4xl font-bold text-slate-900">
-            {t.servicesTitle}
-          </h2>
-          <p className="text-slate-600 text-xs sm:text-base">
-            {t.servicesSubtitle}
-          </p>
-          <div className="w-16 sm:w-20 h-1 bg-gold-gradient mx-auto rounded-full mt-2"></div>
         </div>
 
-        {/* 4 Large Service Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
-          {services.map((service) => {
-            const Icon = service.icon;
+        {/* 1. Headline */}
+        <h3 className="text-sm sm:text-base lg:text-lg font-bold text-white tracking-tight group-hover:text-[#00F2FE] transition-colors">
+          {service.title}
+        </h3>
+
+        {/* 2. Short 6-Word Impact Sentence */}
+        <p className="text-xs text-slate-400 font-normal leading-relaxed mt-1 sm:mt-1.5 line-clamp-2">
+          {service.impactSentence}
+        </p>
+      </div>
+
+      {/* 3. Three Clean Tech Chips & Subtle Action Arrow */}
+      <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-white/5 flex items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-1">
+          {service.chips.map((chip) => (
+            <span
+              key={chip}
+              className="text-[9px] sm:text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-white/5 text-slate-300 border border-white/5 group-hover:border-white/10"
+            >
+              {chip}
+            </span>
+          ))}
+        </div>
+        <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/5 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-[#00F2FE] group-hover:text-slate-950 transition-all shrink-0">
+          <ArrowUpRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Apple/Linear Minimalist 4-Phase Engineering Pipeline
+export const EngineeringPipeline: React.FC = () => {
+  return (
+    <section id="pipeline" className="relative min-h-[100dvh] w-full flex flex-col justify-center items-center bg-[#07090E] text-white py-8 sm:py-12 lg:py-16 snap-section">
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center py-4 sm:py-6 lg:py-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 mb-6 sm:mb-8 lg:mb-10">
+          <div>
+            <div className="text-[10px] sm:text-xs font-mono text-[#00F2FE] tracking-widest uppercase mb-1">
+              PROCESS BLUEPRINT
+            </div>
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight">
+              Engineering Pipeline
+            </h3>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-400 max-w-sm">
+            Four disciplined phases from specification to global production.
+          </p>
+        </div>
+
+        {/* 4 Pipeline Phases Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          {WORKFLOW_PHASES.map((item) => {
+            const Icon = item.icon;
             return (
               <div
-                key={service.id}
-                className="glass-card glass-card-hover p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-amber-500/30 flex flex-col justify-between relative overflow-hidden group shadow-lg"
+                key={item.phase}
+                className="group relative rounded-xl lg:rounded-2xl p-4 sm:p-5 lg:p-6 bg-[#0B0F19]/70 border border-white/10 hover:border-[#00F2FE]/40 transition-all duration-300 flex flex-col justify-between shadow-sm hover:-translate-y-1"
               >
-                {/* Background Tint */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${service.bgGradient} opacity-60 pointer-events-none`}></div>
-
-                {/* Card Top Image Header */}
-                <div className="relative h-36 -mx-8 -mt-8 mb-6 overflow-hidden border-b border-amber-500/20">
-                  <img 
-                    src={service.image} 
-                    alt={service.title} 
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80";
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
-                  <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-white">
-                    <span className="text-xs font-bold text-amber-300 tracking-wide">{service.badge}</span>
-                    <span className="text-[11px] font-bold text-slate-200 bg-slate-950/80 px-2.5 py-0.5 rounded-full border border-amber-500/30">{service.totalCount} Offering Types</span>
-                  </div>
-                </div>
-
                 <div>
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 via-amber-600 to-amber-900 p-0.5 shadow-md shrink-0">
-                        <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center text-amber-400">
-                          <Icon className="w-6 h-6" />
-                        </div>
-                      </div>
-                      <div>
-                        <h3 className="font-cinzel text-lg sm:text-xl font-bold text-slate-900">
-                          {service.title}
-                        </h3>
-                        <p className="text-xs font-bold text-amber-700 mt-0.5">
-                          {service.price}
-                        </p>
-                      </div>
+                  <div className="flex items-center justify-between mb-3 sm:mb-4">
+                    <span className="font-mono text-xs font-bold text-[#00F2FE]">
+                      {item.phase}
+                    </span>
+                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-slate-400 group-hover:text-white transition-colors">
+                      <Icon className="w-4 h-4" />
                     </div>
                   </div>
+                  <h4 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                    {item.title}
+                  </h4>
+                </div>
 
-                  <p className="text-sm text-slate-600 leading-relaxed mb-6">
-                    {service.desc}
+                <div className="mt-4 pt-3 border-t border-white/5">
+                  <span className="text-[9px] sm:text-[10px] font-mono text-slate-500 uppercase block tracking-wider">
+                    DELIVERABLE
+                  </span>
+                  <p className="text-xs text-slate-300 font-medium mt-0.5">
+                    {item.deliverable}
                   </p>
-
-                  {/* Featured Category Tags */}
-                  <div className="space-y-2 mb-8">
-                    <p className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-600 mr-1.5" />
-                      Popular Categories:
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {service.categories.map((cat, i) => (
-                        <button
-                          key={i}
-                          onClick={() => onOpenInquiryWithService(service.title, cat)}
-                          className="px-3 py-1 bg-white/90 hover:bg-amber-500/15 border border-amber-500/20 hover:border-amber-500/50 rounded-lg text-xs font-medium text-slate-700 hover:text-amber-900 transition-all cursor-pointer flex items-center space-x-1"
-                        >
-                          <CheckCircle2 className="w-3 h-3 text-amber-600 shrink-0" />
-                          <span>{cat}</span>
-                        </button>
-                      ))}
-                      {service.totalCount > 6 && (
-                        <span className="px-3 py-1 bg-amber-500/10 text-amber-900 rounded-lg text-xs font-bold">
-                          +{service.totalCount - 6} More
-                        </span>
-                      )}
-                    </div>
-                  </div>
                 </div>
-
-                {/* Card Actions */}
-                <div className="pt-4 border-t border-amber-500/20 flex flex-col sm:flex-row items-center justify-between gap-3">
-                  <button
-                    onClick={() => onNavigate(service.view)}
-                    className="w-full sm:w-auto px-5 py-2.5 bg-white border border-amber-500/40 text-slate-900 hover:bg-amber-500/10 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 cursor-pointer"
-                  >
-                    <span>View All Details & Pricing</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-
-                  <button
-                    onClick={() => onOpenInquiryWithService(service.title)}
-                    className="w-full sm:w-auto px-6 py-2.5 bg-gold-gradient text-slate-950 font-bold rounded-xl text-xs shadow-md hover:opacity-90 transition-all cursor-pointer flex items-center justify-center space-x-1.5"
-                  >
-                    <span>{t.inquireNow}</span>
-                  </button>
-                </div>
-
               </div>
             );
           })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export const ServicesSection: React.FC<ServicesSectionProps> = ({
+  onNavigate,
+  onOpenInquiryWithService,
+}) => {
+  return (
+    <section id="services" className="relative min-h-[100dvh] w-full flex flex-col justify-center items-center bg-[#07090E] text-white py-8 sm:py-12 lg:py-16 snap-section">
+      {/* Ambient Cyber Grid Accent */}
+      <div className="absolute inset-0 bg-[radial-gradient(rgba(0,242,254,0.04)_1px,transparent_1px)] [background-size:32px_32px] pointer-events-none opacity-40" />
+
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center py-2 sm:py-4 lg:py-6">
+        
+        {/* Section Header: Minimalist & Focused */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 sm:gap-4 mb-4 sm:mb-6 lg:mb-7">
+          <div className="max-w-xl">
+            <div className="inline-flex items-center space-x-2 px-2.5 py-0.5 sm:py-1 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-xs font-mono text-[#00F2FE] tracking-widest uppercase mb-1.5 sm:mb-2">
+              <span>CORE CAPABILITIES</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight">
+              High-Performance Services.
+            </h2>
+          </div>
+          <p className="text-slate-400 text-xs sm:text-sm max-w-md font-normal leading-relaxed">
+            Clean architectures engineered for performance, security, and exponential scale.
+          </p>
+        </div>
+
+        {/* Clean 6-Card Services Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3.5 lg:gap-4">
+          {SERVICES.map((service) => (
+            <ServiceCard
+              key={service.id}
+              service={service}
+              onNavigate={onNavigate}
+              onOpenInquiry={(title) =>
+                onOpenInquiryWithService && onOpenInquiryWithService(title)
+              }
+            />
+          ))}
         </div>
 
       </div>
     </section>
   );
 };
+
+
+// Aliases for backwards compatibility
+export { EngineeringPipeline as EngineeringWorkflowTimeline };
+export default ServicesSection;

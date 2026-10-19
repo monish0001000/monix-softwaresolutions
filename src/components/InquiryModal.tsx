@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   X, Check, Upload, Sparkles, Send, ShieldCheck, ArrowRight, ArrowLeft, 
   Copy, FileText, AlertCircle, MessageCircle, Lock, RefreshCw, Trash2,
-  Award, Clock, CheckCircle2, Zap, Star, PartyPopper
+  Award, Clock, CheckCircle2, Zap, Star, PartyPopper, Mail, User, Phone,
+  Layers, ChevronRight, Terminal
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Language, InquiryFormData } from '../types';
@@ -113,7 +114,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email.trim() || !emailRegex.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = 'Please enter a valid corporate or business email';
     }
 
     setErrors(newErrors);
@@ -126,7 +127,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
     // Validate Captcha
     const expectedSum = captchaNum1 + captchaNum2;
     if (parseInt(userCaptcha.trim(), 10) !== expectedSum) {
-      newErrors.captcha = `Incorrect answer. What is ${captchaNum1} + ${captchaNum2}?`;
+      newErrors.captcha = `Incorrect verification. What is ${captchaNum1} + ${captchaNum2}?`;
     }
 
     setErrors(newErrors);
@@ -134,7 +135,6 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Strictly extract digits and cap at 10
     const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 10);
     setFormData({ ...formData, phone: digitsOnly });
     if (errors.phone) setErrors({ ...errors, phone: undefined });
@@ -150,15 +150,20 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
     } else if (service === 'Mobile Applications') {
       defaultCat = MOBILE_CATEGORIES[0];
       defaultBudget = '₹7,999 - ₹15,000';
-    } else if (service === 'AI Internship' || service === 'Live AI Internship') {
+    } else if (service === 'AI Internship') {
       defaultCat = INTERNSHIP_PROGRAMS[0];
       defaultBudget = 'Student Internship Package';
-    } else {
+    } else if (service === 'Academic Projects') {
       defaultCat = PROJECT_CATEGORIES[0];
-      defaultBudget = 'Academic Project Package';
+      defaultBudget = 'Student Package (IEEE Major)';
     }
 
-    setFormData({ ...formData, service, category: defaultCat, budget: defaultBudget });
+    setFormData({
+      ...formData,
+      service,
+      category: defaultCat,
+      budget: defaultBudget,
+    });
   };
 
   const getCategoryOptions = () => {
@@ -168,85 +173,62 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
       case 'Mobile Applications':
         return MOBILE_CATEGORIES;
       case 'AI Internship':
-      case 'Live AI Internship':
         return INTERNSHIP_PROGRAMS;
-      default:
+      case 'Academic Projects':
         return PROJECT_CATEGORIES;
+      default:
+        return WEB_CATEGORIES;
     }
   };
 
-  const appendRequirementTag = (tagText: string) => {
+  const appendRequirementTag = (tag: string) => {
     const current = formData.requirement.trim();
-    if (current.includes(tagText)) return;
-    const updated = current ? `${current}\n- ${tagText}` : `- ${tagText}`;
-    setFormData({ ...formData, requirement: updated });
-  };
-
-  const processFile = (file: File) => {
-    if (file.size > 10 * 1024 * 1024) {
-      alert('File size exceeds 10MB limit.');
-      return;
+    if (!current) {
+      setFormData({ ...formData, requirement: `Included: ${tag}` });
+    } else if (!current.includes(tag)) {
+      setFormData({ ...formData, requirement: `${current}\n• ${tag}` });
     }
-    const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
-    setUploadedFile({
-      name: file.name,
-      size: `${sizeInMB} MB`,
-      type: file.type || 'Document',
-    });
-    setFormData((prev) => ({ ...prev, documentName: file.name }));
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      processFile(e.target.files[0]);
+      const file = e.target.files[0];
+      const fileSizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+      setUploadedFile({
+        name: file.name,
+        size: `${fileSizeInMB} MB`,
+        type: file.type || 'Document'
+      });
+      setFormData({ ...formData, documentName: file.name });
     }
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      processFile(e.dataTransfer.files[0]);
+      const file = e.dataTransfer.files[0];
+      const fileSizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+      setUploadedFile({
+        name: file.name,
+        size: `${fileSizeInMB} MB`,
+        type: file.type || 'Document'
+      });
+      setFormData({ ...formData, documentName: file.name });
     }
   };
 
   const fireGrandCelebration = () => {
-    // Initial big burst
-    confetti({
-      particleCount: 120,
-      spread: 90,
-      origin: { y: 0.5 },
-      colors: ['#F59E0B', '#D97706', '#10B981', '#FBBF24', '#FFFFFF'],
-    });
-
-    // Secondary side cannons
-    setTimeout(() => {
-      confetti({
-        particleCount: 60,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 },
-        colors: ['#F59E0B', '#FFD700', '#FFFFFF'],
-      });
-      confetti({
-        particleCount: 60,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 },
-        colors: ['#F59E0B', '#FFD700', '#FFFFFF'],
-      });
-    }, 250);
-
-    // Final sparkle shower
-    setTimeout(() => {
+    try {
       confetti({
         particleCount: 80,
-        spread: 100,
-        origin: { y: 0.3 },
-        shapes: ['star'],
-        colors: ['#FFD700', '#D4AF37', '#10B981'],
+        spread: 90,
+        origin: { y: 0.6 },
+        colors: ['#00F2FE', '#38BDF8', '#6366F1', '#10B981', '#F59E0B']
       });
-    }, 500);
+    } catch {
+      // Safe fallback
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -265,7 +247,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
         const remainingSecs = Math.ceil((30000 - elapsed) / 1000);
         setErrors(prev => ({
           ...prev,
-          captcha: `Rate limit active: Please wait ${remainingSecs}s before sending another inquiry to prevent spam.`
+          captcha: `Rate limit active: Please wait ${remainingSecs}s before sending another inquiry.`
         }));
         return;
       }
@@ -273,9 +255,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
 
     if (!validateStep3()) return;
 
-    // Record current submission timestamp for cooldown
     localStorage.setItem('monix_last_inquiry_time', Date.now().toString());
-
     setSubmitting(true);
 
     const generatedId = `MONIX-${Math.floor(100000 + Math.random() * 900000)}`;
@@ -289,7 +269,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
 
     const escapeHtml = (str: string) => (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-    // 1. Dispatch to Google Sheet Web App (with Ticket ID MONIX-XXXXXX)
+    // 1. Dispatch to Google Sheet Web App
     const sheetPayload = {
       ticketId: generatedId,
       timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
@@ -322,7 +302,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
       // Safe fallback
     }
 
-    // 2. Dispatch to Telegram Bot (with Ticket ID MONIX-XXXXXX)
+    // 2. Dispatch to Telegram Bot
     const telegramText = `
 🌟 <b>New Website Enquiry Received!</b> 🌟
 ━━━━━━━━━━━━━━━━━━
@@ -354,7 +334,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
       setSubmitting(false);
       setSubmitted(true);
       fireGrandCelebration();
-    }, 1500);
+    }, 1200);
   };
 
   const copyRefId = () => {
@@ -365,153 +345,224 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
     }
   };
 
-  const buildWhatsAppUrl = () => {
+  const buildEmailUrl = () => {
     const text = encodeURIComponent(
-      `Hello MONIX Team!\nI submitted an inquiry on your website.\n\n🎟 Ticket ID: ${refId}\n👤 Name: ${formData.name}\n📞 WhatsApp: +91 ${formData.phone}\n🚀 Service: ${formData.service}\n📌 Category: ${formData.category}\n💰 Budget: ${formData.budget}\n⏱ Timeline: ${formData.timeline || 'Standard'}\n\nPlease share the quote and details.`
+      `Hello MONIX Team!\n\nI have submitted an official inquiry on your website.\n\nTicket ID: ${refId}\nClient Name: ${formData.name}\nService: ${formData.service}\nCategory: ${formData.category}\nBudget: ${formData.budget}\nTimeline: ${formData.timeline || 'Standard'}\n\nPlease share the formal quotation and execution milestones.`
     );
-    return `https://wa.me/919025087129?text=${text}`;
+    return `mailto:monixsoftwaresolutions@gmail.com?subject=${encodeURIComponent(`Inquiry Scope [${refId}]: ${formData.service}`)}&body=${text}`;
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-[#FAF8F5] rounded-3xl border border-amber-500/40 shadow-2xl overflow-hidden my-6 sm:my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-xl animate-fade-in overflow-y-auto">
+      <div className="relative w-full max-w-2xl bg-[#090D16]/95 rounded-3xl border border-cyan-500/30 shadow-[0_0_60px_rgba(0,242,254,0.18),0_25px_60px_rgba(0,0,0,0.95)] overflow-hidden my-4 sm:my-8 backdrop-blur-2xl">
         
-        {/* Top Gold Accent Bar */}
-        <div className="h-2.5 w-full bg-gold-gradient"></div>
+        {/* Top Multi-Stop Neon Gradient Line */}
+        <div className="h-1.5 w-full bg-gradient-to-r from-cyan-400 via-[#00F2FE] via-sky-400 to-[#6366F1] shadow-[0_0_15px_rgba(0,242,254,0.8)]" />
 
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-5 sm:p-6 pb-4 border-b border-amber-500/15">
+        <div className="flex items-center justify-between p-4 sm:p-6 pb-3 sm:pb-4 border-b border-white/10">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-700 shadow-xs">
-              <Sparkles className="w-5 h-5 text-amber-600" />
+            <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-[#00F2FE] shadow-[0_0_15px_rgba(0,242,254,0.2)]">
+              <Sparkles className="w-5 h-5 text-[#00F2FE]" />
             </div>
             <div>
-              <h3 className="font-cinzel text-lg sm:text-xl font-bold text-slate-900">{t.modalTitle}</h3>
-              <p className="text-xs text-slate-500">{t.modalSubtitle}</p>
+              <div className="flex items-center space-x-2">
+                <h3 className="font-sans text-base sm:text-lg lg:text-xl font-bold text-white tracking-tight">
+                  {t.modalTitle}
+                </h3>
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/25 text-[10px] font-mono text-cyan-300 font-semibold">
+                  2h SLA Triage
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 font-light mt-0.5">
+                {t.modalSubtitle}
+              </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full text-slate-400 hover:text-slate-800 hover:bg-amber-500/10 transition-colors cursor-pointer"
+            aria-label="Close Inquiry Dialog"
+            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 border border-transparent hover:border-white/10 transition-all cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Step Indicator */}
+        {/* Cyber Telemetry Step Indicator */}
         {!submitted && (
-          <div className="bg-amber-500/5 px-6 py-3 border-b border-amber-500/10 flex items-center justify-between text-xs font-semibold text-slate-600">
-            <span className={`flex items-center space-x-1.5 ${step === 1 ? 'text-amber-800 font-bold' : step > 1 ? 'text-emerald-700 font-bold' : ''}`}>
-              <span className={`w-5 h-5 rounded-full text-[11px] flex items-center justify-center ${step === 1 ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs' : step > 1 ? 'bg-emerald-600 text-white' : 'bg-slate-200'}`}>1</span>
-              <span>{t.step1}</span>
-            </span>
-            <span className="text-amber-300">•</span>
-            <span className={`flex items-center space-x-1.5 ${step === 2 ? 'text-amber-800 font-bold' : step > 2 ? 'text-emerald-700 font-bold' : ''}`}>
-              <span className={`w-5 h-5 rounded-full text-[11px] flex items-center justify-center ${step === 2 ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs' : step > 2 ? 'bg-emerald-600 text-white' : 'bg-slate-200'}`}>2</span>
-              <span>{t.step2}</span>
-            </span>
-            <span className="text-amber-300">•</span>
-            <span className={`flex items-center space-x-1.5 ${step === 3 ? 'text-amber-800 font-bold' : ''}`}>
-              <span className={`w-5 h-5 rounded-full text-[11px] flex items-center justify-center ${step === 3 ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs' : 'bg-slate-200'}`}>3</span>
-              <span>{t.step3}</span>
-            </span>
+          <div className="bg-[#0B0F19]/90 px-4 sm:px-6 py-2.5 sm:py-3 border-b border-white/[0.08] flex items-center justify-between text-xs font-mono">
+            
+            {/* Step 1 Pill */}
+            <button
+              type="button"
+              onClick={() => step > 1 && setStep(1)}
+              className={`flex items-center space-x-1.5 sm:space-x-2 transition-all ${
+                step === 1
+                  ? 'text-cyan-300 font-bold'
+                  : step > 1
+                  ? 'text-emerald-400 font-semibold cursor-pointer'
+                  : 'text-slate-500'
+              }`}
+            >
+              <span className={`w-5 h-5 rounded-lg text-[10px] font-black flex items-center justify-center transition-all ${
+                step === 1
+                  ? 'bg-gradient-to-r from-cyan-400 to-[#00F2FE] text-slate-950 shadow-[0_0_10px_rgba(0,242,254,0.5)]'
+                  : step > 1
+                  ? 'bg-emerald-500 text-slate-950 font-black'
+                  : 'bg-white/5 border border-white/10 text-slate-400'
+              }`}>
+                {step > 1 ? '✓' : '1'}
+              </span>
+              <span className="hidden xs:inline">{t.step1}</span>
+            </button>
+
+            <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+
+            {/* Step 2 Pill */}
+            <button
+              type="button"
+              onClick={() => {
+                if (validateStep1()) setStep(2);
+              }}
+              className={`flex items-center space-x-1.5 sm:space-x-2 transition-all ${
+                step === 2
+                  ? 'text-cyan-300 font-bold'
+                  : step > 2
+                  ? 'text-emerald-400 font-semibold cursor-pointer'
+                  : 'text-slate-500'
+              }`}
+            >
+              <span className={`w-5 h-5 rounded-lg text-[10px] font-black flex items-center justify-center transition-all ${
+                step === 2
+                  ? 'bg-gradient-to-r from-cyan-400 to-[#00F2FE] text-slate-950 shadow-[0_0_10px_rgba(0,242,254,0.5)]'
+                  : step > 2
+                  ? 'bg-emerald-500 text-slate-950 font-black'
+                  : 'bg-white/5 border border-white/10 text-slate-400'
+              }`}>
+                {step > 2 ? '✓' : '2'}
+              </span>
+              <span className="hidden xs:inline">{t.step2}</span>
+            </button>
+
+            <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+
+            {/* Step 3 Pill */}
+            <div
+              className={`flex items-center space-x-1.5 sm:space-x-2 transition-all ${
+                step === 3 ? 'text-cyan-300 font-bold' : 'text-slate-500'
+              }`}
+            >
+              <span className={`w-5 h-5 rounded-lg text-[10px] font-black flex items-center justify-center transition-all ${
+                step === 3
+                  ? 'bg-gradient-to-r from-cyan-400 to-[#00F2FE] text-slate-950 shadow-[0_0_10px_rgba(0,242,254,0.5)]'
+                  : 'bg-white/5 border border-white/10 text-slate-400'
+              }`}>
+                3
+              </span>
+              <span className="hidden xs:inline">{t.step3}</span>
+            </div>
+
           </div>
         )}
 
-        {/* Form Body */}
-        <div className="p-5 sm:p-6">
+        {/* Modal Form Body */}
+        <div className="p-4 sm:p-6 max-h-[75vh] overflow-y-auto">
           {submitted ? (
-            /* GRAND CONGRATULATIONS CELEBRATION STATE */
-            <div className="text-center py-4 space-y-6 animate-fade-in">
+            /* =========================================================
+               GRAND CONFIRMED CELEBRATION STATE
+               ========================================================= */
+            <div className="text-center py-3 sm:py-5 space-y-5 animate-fade-in">
               
-              {/* Floating Animated Celebration Badge */}
+              {/* Floating Animated Cyber Badge */}
               <div className="relative inline-block">
-                <div className="absolute -inset-2 rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-emerald-500 blur-lg opacity-75 animate-pulse"></div>
-                <div className="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-tr from-amber-500 via-amber-400 to-amber-600 border-4 border-white rounded-3xl flex items-center justify-center mx-auto text-slate-950 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                  <CheckCircle2 className="w-12 h-12 sm:w-14 sm:h-14 stroke-[2.5] text-slate-950" />
+                <div className="absolute -inset-2 rounded-full bg-gradient-to-r from-cyan-400 via-sky-400 to-emerald-400 blur-lg opacity-75 animate-pulse" />
+                <div className="relative w-18 h-18 sm:w-20 sm:h-20 bg-gradient-to-tr from-[#00F2FE] via-sky-400 to-[#6366F1] border-2 border-white/30 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto text-slate-950 shadow-2xl">
+                  <CheckCircle2 className="w-10 h-10 sm:w-12 sm:h-12 stroke-[2.5] text-slate-950" />
                 </div>
               </div>
 
               {/* Congratulatory Headline */}
-              <div className="space-y-2">
-                <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-900 text-xs font-black tracking-wider uppercase">
-                  <PartyPopper className="w-4 h-4 text-amber-600" />
-                  <span>Congratulations! Inquiry Registered</span>
+              <div className="space-y-1.5">
+                <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] sm:text-xs font-mono font-bold tracking-wider uppercase">
+                  <PartyPopper className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Inquiry Successfully Registered</span>
                 </div>
                 
-                <h4 className="font-cinzel text-2xl sm:text-3xl font-black text-slate-900">
-                  You're All Set!
+                <h4 className="text-xl sm:text-2xl font-black text-white">
+                  You're in the Priority Queue!
                 </h4>
                 
-                <p className="text-slate-600 text-sm max-w-md mx-auto leading-relaxed">
-                  Thank you, <strong className="text-slate-900">{formData.name}</strong>! Your inquiry for <strong className="text-amber-800">{formData.service}</strong> has been logged into our priority queue.
+                <p className="text-slate-300 text-xs sm:text-sm max-w-md mx-auto leading-relaxed">
+                  Thank you, <strong className="text-white">{formData.name}</strong>! Your inquiry for <strong className="text-[#00F2FE]">{formData.service}</strong> has been logged into our senior architect queue.
                 </p>
               </div>
 
               {/* Official Ticket & Receipt Card */}
-              <div className="bg-slate-950 text-white rounded-2xl p-5 border border-amber-500/40 shadow-xl text-left max-w-lg mx-auto space-y-4 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+              <div className="bg-[#0B0F19] text-white rounded-2xl p-4 sm:p-5 border border-cyan-500/30 shadow-xl text-left max-w-lg mx-auto space-y-3.5 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
                 
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className="flex items-center justify-between border-b border-white/10 pb-3">
                   <div>
-                    <span className="text-[10px] uppercase tracking-widest text-amber-400 font-bold block">Inquiry Reference Ticket</span>
-                    <span className="font-mono text-xl sm:text-2xl font-black text-white tracking-widest">{refId}</span>
+                    <span className="text-[10px] uppercase font-mono tracking-widest text-[#00F2FE] font-bold block">
+                      Inquiry Reference Ticket
+                    </span>
+                    <span className="font-mono text-lg sm:text-xl font-black text-white tracking-widest">
+                      {refId}
+                    </span>
                   </div>
                   <button
                     onClick={copyRefId}
-                    className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-amber-500/30 rounded-xl text-xs font-bold text-amber-300 transition-all cursor-pointer"
+                    className="flex items-center space-x-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-cyan-500/30 rounded-xl text-xs font-mono font-bold text-cyan-300 transition-all cursor-pointer"
                   >
                     <Copy className="w-3.5 h-3.5" />
                     <span>{copied ? 'Copied!' : 'Copy ID'}</span>
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="grid grid-cols-2 gap-2.5 text-xs font-mono">
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Client Name</span>
-                    <span className="font-bold text-slate-100">{formData.name}</span>
+                    <span className="text-slate-400 block text-[10px]">Client / Org</span>
+                    <span className="font-bold text-slate-100 truncate block">{formData.name}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[11px]">WhatsApp Phone</span>
+                    <span className="text-slate-400 block text-[10px]">WhatsApp Phone</span>
                     <span className="font-bold text-slate-100">+91 {formData.phone}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Service & Category</span>
-                    <span className="font-bold text-amber-300 truncate block">{formData.service} ({formData.category})</span>
+                    <span className="text-slate-400 block text-[10px]">Service & Scope</span>
+                    <span className="font-bold text-cyan-300 truncate block">{formData.service} ({formData.category})</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Est. Budget</span>
-                    <span className="font-bold text-emerald-400">{formData.budget}</span>
+                    <span className="text-slate-400 block text-[10px]">Estimated Budget</span>
+                    <span className="font-bold text-emerald-400 truncate block">{formData.budget}</span>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-                  <span className="flex items-center space-x-1">
-                    <Clock className="w-3.5 h-3.5 text-amber-400" />
+                <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                  <span className="flex items-center space-x-1.5">
+                    <Clock className="w-3.5 h-3.5 text-cyan-400" />
                     <span>Response SLA: Within 2 Hours</span>
                   </span>
                   <span className="flex items-center space-x-1 text-emerald-400 font-semibold">
                     <Zap className="w-3.5 h-3.5" />
-                    <span>Priority Queue</span>
+                    <span>Assigned</span>
                   </span>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+              <div className="pt-1 flex flex-col sm:flex-row items-center justify-center gap-2.5 max-w-md mx-auto">
                 <a
-                  href={buildWhatsAppUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:flex-1 py-3.5 px-5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-sm shadow-lg flex items-center justify-center space-x-2 transition-all cursor-pointer"
+                  href={buildEmailUrl()}
+                  className="w-full sm:flex-1 py-3 px-4 bg-gradient-to-r from-cyan-400 via-sky-400 to-[#6366F1] hover:opacity-95 text-slate-950 rounded-xl font-bold text-xs sm:text-sm font-mono shadow-[0_0_20px_rgba(0,242,254,0.35)] flex items-center justify-center space-x-2 transition-all cursor-pointer"
                 >
-                  <MessageCircle className="w-5 h-5 text-white" />
-                  <span>Connect Instant on WhatsApp</span>
+                  <Mail className="w-4 h-4 text-slate-950" />
+                  <span>Send Direct Email Copy</span>
                 </a>
                 
                 <button
                   onClick={onClose}
-                  className="w-full sm:w-auto px-6 py-3.5 bg-slate-900 text-amber-300 border border-amber-500/30 rounded-xl font-bold text-sm shadow-md hover:bg-slate-800 transition-all cursor-pointer"
+                  className="w-full sm:w-auto px-5 py-3 bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 rounded-xl font-bold text-xs sm:text-sm font-mono transition-all cursor-pointer"
                 >
                   {t.closeModal}
                 </button>
@@ -533,119 +584,144 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                 />
               </div>
 
-              {/* STEP 1: Personal Info */}
+              {/* STEP 1: Contact Information */}
               {step === 1 && (
                 <div className="space-y-4 animate-fade-in">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      {t.fullName} *
+                  
+                  {/* Name Field */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-mono font-bold text-slate-300 flex items-center justify-between">
+                      <span className="flex items-center space-x-1.5">
+                        <User className="w-3.5 h-3.5 text-[#00F2FE]" />
+                        <span>{t.fullName} <span className="text-[#00F2FE]">*</span></span>
+                      </span>
+                      {errors.name && <span className="text-[11px] text-rose-400 font-mono">{errors.name}</span>}
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="Enter your full name"
+                      placeholder="e.g. Karthik Sundaram"
                       value={formData.name}
                       onChange={(e) => {
                         setFormData({ ...formData, name: e.target.value });
                         if (errors.name) setErrors({ ...errors, name: undefined });
                       }}
-                      className={`w-full px-4 py-3 rounded-xl border bg-white focus:outline-none focus:ring-2 text-slate-900 text-sm ${
-                        errors.name ? 'border-red-500 focus:ring-red-400' : 'border-amber-500/30 focus:ring-amber-500'
+                      className={`w-full px-3.5 py-2.5 sm:py-3 rounded-xl bg-[#0D1424] border text-xs sm:text-sm text-white placeholder-slate-500 transition-all font-mono ${
+                        errors.name
+                          ? 'border-rose-500/80 focus:border-rose-500'
+                          : 'border-white/10 focus:border-[#00F2FE] focus:ring-1 focus:ring-[#00F2FE]/50'
                       }`}
                     />
-                    {errors.name && <p className="text-xs text-red-600 mt-1 flex items-center"><AlertCircle className="w-3.5 h-3.5 mr-1" />{errors.name}</p>}
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      WhatsApp Phone Number (10 Digits) *
+                  {/* Phone Field */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-mono font-bold text-slate-300 flex items-center justify-between">
+                      <span className="flex items-center space-x-1.5">
+                        <Phone className="w-3.5 h-3.5 text-[#00F2FE]" />
+                        <span>WhatsApp Phone (10 Digits) <span className="text-[#00F2FE]">*</span></span>
+                      </span>
+                      {errors.phone && <span className="text-[11px] text-rose-400 font-mono">{errors.phone}</span>}
                     </label>
-                    <div className="relative">
-                      <span className="absolute left-3.5 top-3.5 text-xs font-extrabold text-slate-600">+91</span>
+                    <div className="relative flex items-center">
+                      <span className="absolute left-3.5 text-xs font-mono font-extrabold text-[#00F2FE]">
+                        +91
+                      </span>
                       <input
                         type="tel"
                         required
                         maxLength={10}
-                        placeholder="e.g. 9876543210"
+                        placeholder="9876543210"
                         value={formData.phone}
                         onChange={handlePhoneChange}
-                        className={`w-full pl-12 pr-12 py-3 rounded-xl border bg-white focus:outline-none focus:ring-2 text-slate-900 text-sm font-mono tracking-wider ${
-                          errors.phone ? 'border-red-500 focus:ring-red-400' : 'border-amber-500/30 focus:ring-amber-500'
+                        className={`w-full pl-12 pr-12 py-2.5 sm:py-3 rounded-xl bg-[#0D1424] border text-xs sm:text-sm text-white placeholder-slate-500 transition-all font-mono tracking-wider ${
+                          errors.phone
+                            ? 'border-rose-500/80 focus:border-rose-500'
+                            : 'border-white/10 focus:border-[#00F2FE] focus:ring-1 focus:ring-[#00F2FE]/50'
                         }`}
                       />
-                      <span className="absolute right-3.5 top-3.5 text-xs font-semibold text-slate-400">
+                      <span className="absolute right-3.5 text-[10px] font-mono text-slate-400">
                         {formData.phone.length}/10
                       </span>
                     </div>
-                    {errors.phone ? (
-                      <p className="text-xs text-red-600 mt-1 flex items-center"><AlertCircle className="w-3.5 h-3.5 mr-1" />{errors.phone}</p>
-                    ) : (
-                      <p className="text-[11px] text-slate-500 mt-1">We send instant project quotes & PDF proposals directly via WhatsApp.</p>
-                    )}
+                    <p className="text-[10px] sm:text-[11px] text-slate-400 font-mono">
+                      Direct quote & technical execution blueprint delivered instantly via WhatsApp.
+                    </p>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      {t.emailAddr} *
+                  {/* Email Field */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-mono font-bold text-slate-300 flex items-center justify-between">
+                      <span className="flex items-center space-x-1.5">
+                        <Mail className="w-3.5 h-3.5 text-[#00F2FE]" />
+                        <span>Corporate / Business Email <span className="text-[#00F2FE]">*</span></span>
+                      </span>
+                      {errors.email && <span className="text-[11px] text-rose-400 font-mono">{errors.email}</span>}
                     </label>
                     <input
                       type="email"
                       required
-                      placeholder="client@domain.com"
+                      placeholder="client@organization.com"
                       value={formData.email}
                       onChange={(e) => {
                         setFormData({ ...formData, email: e.target.value });
                         if (errors.email) setErrors({ ...errors, email: undefined });
                       }}
-                      className={`w-full px-4 py-3 rounded-xl border bg-white focus:outline-none focus:ring-2 text-slate-900 text-sm ${
-                        errors.email ? 'border-red-500 focus:ring-red-400' : 'border-amber-500/30 focus:ring-amber-500'
+                      className={`w-full px-3.5 py-2.5 sm:py-3 rounded-xl bg-[#0D1424] border text-xs sm:text-sm text-white placeholder-slate-500 transition-all font-mono ${
+                        errors.email
+                          ? 'border-rose-500/80 focus:border-rose-500'
+                          : 'border-white/10 focus:border-[#00F2FE] focus:ring-1 focus:ring-[#00F2FE]/50'
                       }`}
                     />
-                    {errors.email && <p className="text-xs text-red-600 mt-1 flex items-center"><AlertCircle className="w-3.5 h-3.5 mr-1" />{errors.email}</p>}
                   </div>
 
-                  <div className="pt-3 flex justify-end">
+                  {/* Step 1 Action */}
+                  <div className="pt-2 flex justify-end">
                     <button
                       type="button"
                       onClick={() => {
                         if (validateStep1()) setStep(2);
                       }}
-                      className="flex items-center space-x-2 px-6 py-3 bg-gold-gradient text-slate-950 font-bold text-sm rounded-xl shadow-md cursor-pointer hover:opacity-90 transition-all"
+                      className="flex items-center space-x-2 px-6 py-2.5 sm:py-3 bg-gradient-to-r from-cyan-400 via-sky-400 to-[#6366F1] text-slate-950 font-bold text-xs sm:text-sm rounded-xl shadow-[0_0_20px_rgba(0,242,254,0.35)] cursor-pointer hover:opacity-95 transition-all font-mono"
                     >
-                      <span>Proceed to Step 2</span>
+                      <span>Proceed to Scope Selection</span>
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
+
                 </div>
               )}
 
-              {/* STEP 2: Service & Details */}
+              {/* STEP 2: Service & Scope Selection */}
               {step === 2 && (
                 <div className="space-y-4 animate-fade-in">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      {t.selectService} *
+                  
+                  {/* Service Selector */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-mono font-bold text-slate-300 block">
+                      Primary Service Focus <span className="text-[#00F2FE]">*</span>
                     </label>
                     <select
                       value={formData.service}
                       onChange={(e) => handleServiceChange(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-amber-500/30 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-900 text-sm font-semibold"
+                      className="w-full px-3.5 py-2.5 sm:py-3 rounded-xl bg-[#0D1424] border border-white/10 text-xs sm:text-sm text-white focus:outline-none focus:border-[#00F2FE] font-mono"
                     >
-                      <option value="Website Development">Website Development (Pricing from ₹4,999*)</option>
-                      <option value="Mobile Applications">Mobile Applications (Pricing from ₹7,999*)</option>
-                      <option value="AI Internship">AI Internship (100% Online & Mentorship)</option>
+                      <option value="Website Development">Website Development (From ₹4,999*)</option>
+                      <option value="Mobile Applications">Mobile Applications (From ₹7,999*)</option>
+                      <option value="AI Internship">AI Internship (100% Online & MSME Verified)</option>
                       <option value="Academic Projects">Academic & IEEE Major Projects</option>
                     </select>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      {t.selectCategory} *
+                  {/* Category Selector */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-mono font-bold text-slate-300 block">
+                      Specialized Domain / Track <span className="text-[#00F2FE]">*</span>
                     </label>
                     <select
                       value={formData.category}
                       onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-amber-500/30 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-900 text-sm"
+                      className="w-full px-3.5 py-2.5 sm:py-3 rounded-xl bg-[#0D1424] border border-white/10 text-xs sm:text-sm text-white focus:outline-none focus:border-[#00F2FE] font-mono"
                     >
                       {getCategoryOptions().map((cat) => (
                         <option key={cat} value={cat}>
@@ -655,32 +731,34 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                     </select>
                   </div>
 
+                  {/* Budget & Timeline Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                        {t.estimatedBudget}
+                    
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-mono font-bold text-slate-300 block">
+                        Estimated Budget
                       </label>
                       <select
                         value={formData.budget}
                         onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                        className="w-full px-3.5 py-3 rounded-xl border border-amber-500/30 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-900 text-xs font-medium"
+                        className="w-full px-3 py-2.5 rounded-xl bg-[#0D1424] border border-white/10 text-xs text-white focus:outline-none focus:border-[#00F2FE] font-mono"
                       >
                         <option value="₹4,999 - ₹10,000 (Standard)">₹4,999 - ₹10,000 (Standard)</option>
                         <option value="₹10,000 - ₹25,000 (Professional)">₹10,000 - ₹25,000 (Professional)</option>
                         <option value="₹25,000 - ₹50,000 (Enterprise)">₹25,000 - ₹50,000 (Enterprise)</option>
                         <option value="₹50,000+ (Custom SaaS / ERP)">₹50,000+ (Custom SaaS / ERP)</option>
-                        <option value="Student Internship Package">Student Package</option>
+                        <option value="Student Internship Package">Student Internship Package</option>
                       </select>
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-mono font-bold text-slate-300 block">
                         Target Timeline
                       </label>
                       <select
                         value={formData.timeline}
                         onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
-                        className="w-full px-3.5 py-3 rounded-xl border border-amber-500/30 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-900 text-xs font-medium"
+                        className="w-full px-3 py-2.5 rounded-xl bg-[#0D1424] border border-white/10 text-xs text-white focus:outline-none focus:border-[#00F2FE] font-mono"
                       >
                         <option value="Standard (1 - 2 Weeks)">Standard (1 - 2 Weeks)</option>
                         <option value="Express Priority (3 - 5 Days)">Express Priority (3 - 5 Days)</option>
@@ -688,84 +766,78 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                         <option value="Flexible Schedule">Flexible Schedule</option>
                       </select>
                     </div>
+
                   </div>
 
-                  <div className="flex justify-between pt-3 border-t border-amber-500/15">
+                  {/* Step 2 Actions */}
+                  <div className="flex justify-between pt-2 border-t border-white/10">
                     <button
                       type="button"
                       onClick={() => setStep(1)}
-                      className="flex items-center space-x-1 px-4 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-900 border border-slate-300 rounded-xl cursor-pointer"
+                      className="flex items-center space-x-1.5 px-4 py-2.5 text-xs font-mono font-bold text-slate-300 hover:text-white border border-white/10 hover:bg-white/5 rounded-xl cursor-pointer transition-all"
                     >
-                      <ArrowLeft className="w-4 h-4" />
+                      <ArrowLeft className="w-3.5 h-3.5" />
                       <span>Back</span>
                     </button>
+                    
                     <button
                       type="button"
                       onClick={() => setStep(3)}
-                      className="flex items-center space-x-2 px-6 py-2.5 bg-gold-gradient text-slate-950 font-bold text-sm rounded-xl shadow-md cursor-pointer hover:opacity-90 transition-all"
+                      className="flex items-center space-x-2 px-6 py-2.5 bg-gradient-to-r from-cyan-400 via-sky-400 to-[#6366F1] text-slate-950 font-bold text-xs sm:text-sm rounded-xl shadow-[0_0_20px_rgba(0,242,254,0.35)] cursor-pointer hover:opacity-95 transition-all font-mono"
                     >
                       <span>Proceed to Step 3</span>
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
+
                 </div>
               )}
 
-              {/* STEP 3: Requirements, File Dropzone & Anti-Spam Captcha */}
+              {/* STEP 3: Requirements, File Upload & Security Captcha */}
               {step === 3 && (
-                <div className="space-y-4 animate-fade-in">
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <div className="space-y-3.5 animate-fade-in">
+                  
+                  {/* Requirement Details */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-mono font-bold text-slate-300">
                         {t.reqDescription}
                       </label>
-                      <span className="text-[10px] text-amber-800 font-semibold">Tap chips to add quick features</span>
+                      <span className="text-[10px] text-cyan-400 font-mono">Tap chips to add scope</span>
                     </div>
 
                     <textarea
-                      rows={3}
-                      placeholder="Describe key features, reference websites, specific objectives, or deadlines..."
+                      rows={2}
+                      placeholder="Describe key features, reference links, technical goals or deadlines..."
                       value={formData.requirement}
                       onChange={(e) => setFormData({ ...formData, requirement: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-amber-500/30 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-900 text-sm"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#0D1424] border border-white/10 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#00F2FE] resize-none font-mono"
                     />
 
                     {/* Quick Requirement Chips */}
-                    <div className="flex flex-wrap gap-1.5 mt-2">
-                      <button
-                        type="button"
-                        onClick={() => appendRequirementTag('Payment Gateway Integration')}
-                        className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer"
-                      >
-                        + Payment Gateway
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => appendRequirementTag('Mobile Responsive Layout')}
-                        className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer"
-                      >
-                        + Mobile Responsive
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => appendRequirementTag('Admin Control Panel')}
-                        className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer"
-                      >
-                        + Admin Panel
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => appendRequirementTag('SEO & Fast Loading Optimization')}
-                        className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer"
-                      >
-                        + SEO & Speed
-                      </button>
+                    <div className="flex flex-wrap gap-1.5 pt-0.5">
+                      {[
+                        'Payment Gateway Integration',
+                        '60fps Mobile Ready',
+                        'Admin Dashboard',
+                        'SEO & Fast Loading',
+                        'Gemini AI Assistant'
+                      ].map((chip) => (
+                        <button
+                          key={chip}
+                          type="button"
+                          onClick={() => appendRequirementTag(chip)}
+                          className="px-2 py-0.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/25 rounded-md text-[10px] font-mono transition-colors cursor-pointer"
+                        >
+                          + {chip}
+                        </button>
+                      ))}
                     </div>
                   </div>
 
                   {/* Drag and Drop File Upload Area */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    <label className="text-xs font-mono font-bold text-slate-300 block mb-1">
                       {t.uploadDoc}
                     </label>
                     <div
@@ -775,8 +847,10 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                       }}
                       onDragLeave={() => setIsDragging(false)}
                       onDrop={handleDrop}
-                      className={`border-2 border-dashed rounded-2xl p-3.5 text-center transition-all relative ${
-                        isDragging ? 'border-amber-500 bg-amber-500/15 scale-[1.01]' : 'border-amber-500/30 bg-amber-500/5 hover:border-amber-500'
+                      className={`border-2 border-dashed rounded-xl p-3 text-center transition-all relative ${
+                        isDragging
+                          ? 'border-cyan-400 bg-cyan-500/15'
+                          : 'border-cyan-500/30 bg-cyan-500/5 hover:border-cyan-400'
                       }`}
                     >
                       <input
@@ -787,12 +861,12 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                       />
                       
                       {uploadedFile ? (
-                        <div className="flex items-center justify-between bg-white p-2.5 rounded-xl border border-amber-500/30 text-xs text-slate-800">
-                          <div className="flex items-center space-x-2 text-left">
-                            <FileText className="w-5 h-5 text-amber-600 shrink-0" />
-                            <div className="truncate max-w-[240px]">
-                              <p className="font-bold text-slate-900 truncate">{uploadedFile.name}</p>
-                              <p className="text-[10px] text-slate-500">{uploadedFile.size}</p>
+                        <div className="flex items-center justify-between bg-[#0D1424] p-2 rounded-lg border border-cyan-500/30 text-xs font-mono">
+                          <div className="flex items-center space-x-2 text-left truncate">
+                            <FileText className="w-4 h-4 text-cyan-400 shrink-0" />
+                            <div className="truncate max-w-[220px]">
+                              <p className="font-bold text-white truncate">{uploadedFile.name}</p>
+                              <p className="text-[9px] text-slate-400">{uploadedFile.size}</p>
                             </div>
                           </div>
                           <button
@@ -802,28 +876,28 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                               setUploadedFile(null);
                               setFormData({ ...formData, documentName: '' });
                             }}
-                            className="p-1 rounded-lg text-red-500 hover:bg-red-50 z-20 cursor-pointer"
+                            className="p-1 rounded-md text-rose-400 hover:bg-rose-500/10 z-20 cursor-pointer"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       ) : (
                         <div>
-                          <Upload className="w-5 h-5 text-amber-600 mx-auto mb-1" />
-                          <p className="text-xs font-bold text-slate-800">
-                            Drag & Drop project file here, or <span className="text-amber-700 underline">browse</span>
+                          <Upload className="w-4 h-4 text-[#00F2FE] mx-auto mb-1" />
+                          <p className="text-xs font-mono font-bold text-slate-200">
+                            Drag & Drop reference file or <span className="text-[#00F2FE] underline">browse</span>
                           </p>
-                          <p className="text-[10px] text-slate-500 mt-0.5">Supports PDF, Word, JPG, PNG, ZIP (Max 10MB)</p>
+                          <p className="text-[9px] font-mono text-slate-500 mt-0.5">PDF, DOCX, ZIP, PNG, JPG (Max 10MB)</p>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Anti-Spam Math Protection */}
-                  <div className="bg-white p-3 rounded-2xl border border-amber-500/30 flex items-center justify-between space-x-3">
-                    <div className="flex items-center space-x-2 text-xs font-semibold text-slate-800">
-                      <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0" />
-                      <span>Security Verification: What is <strong className="text-slate-950 text-sm font-extrabold">{captchaNum1} + {captchaNum2}</strong>?</span>
+                  {/* Anti-Spam Security Captcha */}
+                  <div className="bg-[#0D1424] p-2.5 sm:p-3 rounded-xl border border-cyan-500/25 flex items-center justify-between space-x-3">
+                    <div className="flex items-center space-x-2 text-xs font-mono text-slate-200">
+                      <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0" />
+                      <span>Security Verification: What is <strong className="text-[#00F2FE] text-sm font-bold">{captchaNum1} + {captchaNum2}</strong>?</span>
                     </div>
                     <input
                       type="number"
@@ -834,41 +908,40 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                         setUserCaptcha(e.target.value);
                         if (errors.captcha) setErrors({ ...errors, captcha: undefined });
                       }}
-                      className="w-24 px-3 py-1.5 rounded-xl border border-amber-500/40 text-center font-bold text-slate-900 text-sm focus:ring-2 focus:ring-amber-500"
+                      className="w-20 px-2.5 py-1 rounded-lg bg-[#07090E] border border-cyan-500/40 text-center font-bold text-white text-xs font-mono focus:ring-1 focus:ring-cyan-400"
                     />
                   </div>
-                  {errors.captcha && <p className="text-xs text-red-600 flex items-center"><AlertCircle className="w-3.5 h-3.5 mr-1" />{errors.captcha}</p>}
+                  {errors.captcha && <p className="text-xs text-rose-400 font-mono flex items-center"><AlertCircle className="w-3.5 h-3.5 mr-1" />{errors.captcha}</p>}
 
-                  {/* Complete Confirmation Summary Box */}
-                  <div className="bg-slate-900 text-white p-3.5 rounded-2xl text-xs space-y-1.5 border border-amber-500/30">
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-1.5 text-amber-400 font-bold uppercase tracking-wider text-[10px]">
-                      <span>Inquiry Summary Confirmation</span>
-                      <span className="text-emerald-400">Ready To Submit</span>
+                  {/* Summary Confirmation Pill */}
+                  <div className="bg-[#0B0F19] text-white p-3 rounded-xl text-xs font-mono space-y-1 border border-white/10">
+                    <div className="flex items-center justify-between border-b border-white/10 pb-1 text-[10px] text-cyan-400 font-bold uppercase tracking-wider">
+                      <span>Pre-Dispatch Telemetry</span>
+                      <span className="text-emerald-400">Ready</span>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 text-[11px]">
-                      <p><strong className="text-slate-400">Client:</strong> {formData.name}</p>
-                      <p><strong className="text-slate-400">WhatsApp:</strong> +91 {formData.phone}</p>
-                      <p><strong className="text-slate-400">Service:</strong> {formData.service}</p>
-                      <p><strong className="text-slate-400">Category:</strong> {formData.category}</p>
-                      <p><strong className="text-slate-400">Budget:</strong> {formData.budget}</p>
-                      <p><strong className="text-slate-400">Timeline:</strong> {formData.timeline}</p>
+                    <div className="grid grid-cols-2 gap-1.5 text-[10px] sm:text-[11px] text-slate-300">
+                      <p><span className="text-slate-500">Client:</span> {formData.name}</p>
+                      <p><span className="text-slate-500">Phone:</span> +91 {formData.phone}</p>
+                      <p><span className="text-slate-500">Service:</span> {formData.service}</p>
+                      <p><span className="text-slate-500">Timeline:</span> {formData.timeline}</p>
                     </div>
                   </div>
 
-                  <div className="flex justify-between pt-2 border-t border-amber-500/15">
+                  {/* Step 3 Actions */}
+                  <div className="flex justify-between pt-2 border-t border-white/10">
                     <button
                       type="button"
                       onClick={() => setStep(2)}
-                      className="flex items-center space-x-1 px-4 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-900 border border-slate-300 rounded-xl cursor-pointer"
+                      className="flex items-center space-x-1.5 px-4 py-2.5 text-xs font-mono font-bold text-slate-300 hover:text-white border border-white/10 hover:bg-white/5 rounded-xl cursor-pointer transition-all"
                     >
-                      <ArrowLeft className="w-4 h-4" />
+                      <ArrowLeft className="w-3.5 h-3.5" />
                       <span>Back</span>
                     </button>
 
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="flex items-center space-x-2 px-8 py-3 bg-gold-gradient text-slate-950 font-black text-sm rounded-xl shadow-lg gold-glow cursor-pointer hover:opacity-95 transition-all"
+                      className="flex items-center space-x-2 px-6 sm:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-cyan-400 via-sky-400 to-[#6366F1] text-slate-950 font-black text-xs sm:text-sm rounded-xl shadow-[0_0_25px_rgba(0,242,254,0.4)] cursor-pointer hover:opacity-95 transition-all font-mono disabled:opacity-50"
                     >
                       {submitting ? (
                         <span className="flex items-center space-x-2">
@@ -878,11 +951,12 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                       ) : (
                         <>
                           <Send className="w-4 h-4 text-slate-950" />
-                          <span>Submit Official Inquiry</span>
+                          <span>Submit Official Inquiry &lt; 2h SLA</span>
                         </>
                       )}
                     </button>
                   </div>
+
                 </div>
               )}
 

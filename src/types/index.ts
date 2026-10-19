@@ -2,6 +2,7 @@ export type Language = 'en' | 'ta';
 
 export type PageView = 
   | 'home'
+  | 'about'
   | 'web-development'
   | 'mobile-applications'
   | 'ai-internships'
@@ -45,4 +46,31 @@ export interface ServiceCardItem {
   categoriesCount: number;
   description: string;
   featuredCategories: string[];
+}
+
+export interface ReviewItem {
+  name: string;
+  role: string;
+  quote: string;
+  avatarText?: string;
+  badge?: string;
+  metric?: string;
+  rating?: number;
+  verified?: boolean;
+}
+
+export interface FAQItem {
+  q: string;
+  a: string;
+  category: 'timelines' | 'performance' | 'ip' | 'msme' | 'warranty' | 'general';
+  tag: string;
+}
+
+export type InquiryCategory = 'Enterprise Project' | 'Consultation' | 'Internship' | 'Security Audit';
+
+export interface ExecutiveContactFormData {
+  name: string;
+  email: string;
+  category: InquiryCategory;
+  message: string;
 }

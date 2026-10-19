@@ -11,7 +11,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ currentView, selectedCategory,
   useEffect(() => {
     let title = 'MONIX Software Solutions | AI Digital Technology Company';
     let description = 'Govt MSME Registered Technology Company providing AI-Powered Website Development from ₹4,999, Mobile Applications from ₹7,999, Online AI Internships, and IEEE Academic Projects.';
-    let keywords = 'MONIX, MONIX Software Solutions, monix.srm, monix-softwaresolutions, MONIX SRM, rajibabu1184@gmail.com, 9025087129, Web Development, Mobile Apps, AI Internships, Academic Projects, MSME India, Monish CEO';
+    let keywords = 'MONIX, MONIX Software Solutions, monix.srm, monix-softwaresolutions, MONIX SRM, contact@monixsoftware.com, Web Development, Mobile Apps, AI Internships, Academic Projects, MSME India, Monish CEO';
     let path = '/';
 
     switch (currentView) {
@@ -41,8 +41,8 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ currentView, selectedCategory,
         break;
       case 'contact':
         title = 'Contact Us | MONIX Software Solutions Executive Helpdesk';
-        description = 'Get in touch with MONIX Software Solutions. Phone: +91 90250 87129, Email: rajibabu1184@gmail.com. Instagram: monix.srm, LinkedIn: monix-softwaresolutions.';
-        keywords = 'Contact MONIX, Monish CEO, Software Solutions Helpdesk, Monix Email, Monix Phone, rajibabu1184@gmail.com, 9025087129, monix.srm';
+        description = 'Get in touch with MONIX Software Solutions. Email: contact@monixsoftware.com. Instagram: monix.srm, LinkedIn: monix-softwaresolutions.';
+        keywords = 'Contact MONIX, Monish CEO, Software Solutions Helpdesk, Monix Email, contact@monixsoftware.com, monix.srm';
         path = '/#contact';
         break;
       case 'category-detail':
@@ -54,7 +54,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ currentView, selectedCategory,
         break;
       default:
         title = 'MONIX Software Solutions | AI-Powered Websites, Apps, Internships & Projects';
-        description = 'Govt of India MSME Registered Company — Transforming business visions into intelligent digital assets. Contact: +91 90250 87129, rajibabu1184@gmail.com.';
+        description = 'Govt of India MSME Registered Company — Transforming business visions into intelligent digital assets. Email: contact@monixsoftware.com.';
         path = '/';
         break;
     }
@@ -103,8 +103,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ currentView, selectedCategory,
           'url': 'https://www.linkedin.com/company/monix-softwaresolutions',
           'logo': 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80',
           'description': 'Govt MSME Registered AI Digital Technology Company providing Web Development, Mobile Apps, AI Internships, and IEEE Projects.',
-          'email': 'rajibabu1184@gmail.com',
-          'telephone': '+91-9025087129',
+          'email': 'contact@monixsoftware.com',
           'founder': {
             '@type': 'Person',
             'name': 'Monish',
@@ -121,12 +120,12 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ currentView, selectedCategory,
           'name': 'MONIX Software Solutions',
           'image': 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
           'priceRange': '₹4999 - ₹50000+',
-          'telephone': '+91-9025087129',
-          'email': 'rajibabu1184@gmail.com',
+          'email': 'contact@monixsoftware.com',
           'address': {
             '@type': 'PostalAddress',
             'addressCountry': 'IN',
-            'addressRegion': 'Tamil Nadu / India',
+            'addressLocality': 'Tiruvannamalai',
+            'addressRegion': 'Tamil Nadu',
           },
           'sameAs': [
             'https://www.instagram.com/monix.srm',

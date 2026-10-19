@@ -87,8 +87,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ lang }) => {
               {/* Bottom Footer Info */}
               <div className="pt-4 border-t border-amber-500/20 flex items-center justify-between text-xs text-slate-600 font-medium">
                 <span className="font-semibold text-slate-700">Domain: Web, Mobile, AI & IEEE</span>
-                <a href="tel:+919025087129" className="text-amber-800 font-bold hover:underline flex items-center gap-1">
-                  <span>+91 90250 87129</span>
+                <a href="mailto:contact@monixsoftware.com" className="text-amber-800 font-bold hover:underline flex items-center gap-1">
+                  <span>contact@monixsoftware.com</span>
                 </a>
               </div>
 

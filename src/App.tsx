@@ -8,7 +8,7 @@ import { Footer } from './components/Footer';
 import { InquiryModal } from './components/InquiryModal';
 import { AboutModal } from './components/AboutModal';
 import { SEOHead } from './components/SEOHead';
-import { LoadingOverlay } from './components/LoadingOverlay';
+import { LoadingScreen } from './components/LoadingScreen';
 import { PageSkeleton } from './components/PageSkeleton';
 import { ScrollProgressBar } from './components/ScrollProgressBar';
 
@@ -23,11 +23,12 @@ import { StatsSection } from './components/StatsSection';
 import { TestimonialsSection } from './components/TestimonialsSection';
 import { FAQSection } from './components/FAQSection';
 import { CTASection } from './components/CTASection';
-import { WhatsAppButton } from './components/WhatsAppButton';
-import { AIAssistantButton } from './components/AIAssistantButton';
+import { FloatingAURAButton } from './components/FloatingAURAButton';
+import { CyberShowcaseSection } from './components/CyberShowcaseSection';
 
 // Lazy Loaded Sub-Pages for Core Web Vitals & Performance Optimization
 const WebDevPage = lazy(() => import('./components/pages/WebDevPage').then(module => ({ default: module.WebDevPage })));
+const AboutUsDeepDive = lazy(() => import('./components/AboutUsDeepDive').then(module => ({ default: module.AboutUsDeepDive })));
 const MobileAppsPage = lazy(() => import('./components/pages/MobileAppsPage').then(module => ({ default: module.MobileAppsPage })));
 const InternshipsPage = lazy(() => import('./components/pages/InternshipsPage').then(module => ({ default: module.InternshipsPage })));
 const ProjectsPage = lazy(() => import('./components/pages/ProjectsPage').then(module => ({ default: module.ProjectsPage })));
@@ -57,12 +58,74 @@ export default function App() {
   }, [lang]);
 
   useEffect(() => {
-    // Hide initial overlay after assets load
+    // Hide initial loading screen after immersive intro completes
     const timer = setTimeout(() => {
       setInitialLoading(false);
-    }, 700);
+    }, 2000);
     return () => clearTimeout(timer);
   }, []);
+
+  // Directional Scroll Snapping:
+  // Forward scroll (down) applies scroll-snap-type mandatory for full-screen section locking.
+  // Reverse scroll (up) immediately removes snapping for free, unhindered upward scrolling.
+  useEffect(() => {
+    let touchStartY = 0;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (currentView !== 'home') {
+        document.documentElement.classList.remove('snap-down');
+        return;
+      }
+      if (e.deltaY > 12) {
+        document.documentElement.classList.add('snap-down');
+      } else if (e.deltaY < -12) {
+        document.documentElement.classList.remove('snap-down');
+      }
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches && e.touches[0]) {
+        touchStartY = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (currentView !== 'home' || !e.touches || !e.touches[0]) {
+        document.documentElement.classList.remove('snap-down');
+        return;
+      }
+      const currentY = e.touches[0].clientY;
+      const diff = touchStartY - currentY; // positive = swiping up = scrolling down
+      if (diff > 16) {
+        document.documentElement.classList.add('snap-down');
+      } else if (diff < -16) {
+        document.documentElement.classList.remove('snap-down');
+      }
+      touchStartY = currentY;
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (currentView !== 'home') return;
+      if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+        document.documentElement.classList.add('snap-down');
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        document.documentElement.classList.remove('snap-down');
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: true });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('keydown', handleKeyDown);
+      document.documentElement.classList.remove('snap-down');
+    };
+  }, [currentView]);
 
   const handleOpenInquiry = (service: string = 'Website Development', category: string = '') => {
     setPreselectedService(service);
@@ -78,7 +141,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF8F5] text-slate-800 font-sans antialiased selection:bg-amber-200 selection:text-amber-900">
+    <div className="w-full max-w-[100vw] min-h-[100svh] overflow-x-hidden flex flex-col bg-[#050B14] text-slate-100 font-sans antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
       
       {/* Dynamic SEO Head Manager */}
       <SEOHead currentView={currentView} selectedCategory={selectedCatTitle} lang={lang} />
@@ -86,8 +149,8 @@ export default function App() {
       {/* Dynamic Top Scroll Expansion Progress Line */}
       <ScrollProgressBar />
 
-      {/* Initial Luxury App Loading Overlay */}
-      <LoadingOverlay isLoading={initialLoading} />
+      {/* Immersive Cyber Video Loading Screen using load.mp4 */}
+      <LoadingScreen isLoading={initialLoading} onLoaded={() => setInitialLoading(false)} />
 
       {/* Accessibility Skip Link */}
       <a 
@@ -97,20 +160,18 @@ export default function App() {
         Skip to main content
       </a>
 
-      {/* Fixed Main Header Overlay Wrapper */}
-      <div className="fixed top-0 left-0 right-0 z-50 w-full">
-        <Navbar
-          currentView={currentView}
-          setCurrentView={(view) => {
-            setCurrentView(view);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          lang={lang}
-          setLang={setLang}
-          onOpenInquiry={() => handleOpenInquiry('Website Development')}
-          onOpenAboutModal={() => setAboutModalOpen(true)}
-        />
-      </div>
+      {/* Fixed Main Header Navigation */}
+      <Navbar
+        currentView={currentView}
+        setCurrentView={(view) => {
+          setCurrentView(view);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        lang={lang}
+        setLang={setLang}
+        onOpenInquiry={() => handleOpenInquiry('Website Development')}
+        onOpenAboutModal={() => setAboutModalOpen(true)}
+      />
 
       {/* Main Content Router with Framer Motion Page Transitions */}
       <main id="main-content" className={`flex-grow focus:outline-none ${currentView !== 'home' ? 'pt-16 sm:pt-20' : ''}`} tabIndex={-1}>
@@ -144,6 +205,13 @@ export default function App() {
                   onOpenInquiryWithService={(service, category) => handleOpenInquiry(service, category)}
                 />
 
+                {/* Authoritative Featured Domains & AI-Driven Internships Cyber Showcase */}
+                <CyberShowcaseSection
+                  lang={lang}
+                  onOpenInquiry={(service, category) => handleOpenInquiry(service, category)}
+                  onSelectCategoryDetail={(cat, serviceType) => handleOpenCategoryDetail(cat, serviceType)}
+                />
+
                 {/* 2. Uncompromising Standards - Why Choose MONIX (Placed directly after Core Services) */}
                 <WhyChooseUs lang={lang} />
 
@@ -168,6 +236,19 @@ export default function App() {
                   onOpenInquiry={() => handleOpenInquiry('Website Development')}
                 />
               </>
+            )}
+
+            {currentView === 'about' && (
+              <Suspense fallback={<PageSkeleton />}>
+                <AboutUsDeepDive
+                  lang={lang}
+                  onOpenInquiry={(inquiryType) => handleOpenInquiry('Enterprise Consultation', inquiryType || 'About Page Dossier')}
+                  onBackToHome={() => {
+                    setCurrentView('home');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                />
+              </Suspense>
             )}
 
             {currentView === 'web-development' && (
@@ -236,15 +317,22 @@ export default function App() {
         </AnimatePresence>
       </main>
 
-      {/* Footer */}
-      <Footer
-        lang={lang}
-        onNavigate={(view) => {
-          setCurrentView(view);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        onOpenInquiry={() => handleOpenInquiry('Website Development')}
-      />
+      {/* Footer - Rendered Exclusively on Homepage */}
+      {currentView === 'home' && (
+        <Footer
+          lang={lang}
+          onNavigate={(view) => {
+            if (view === 'contact') {
+              const el = document.getElementById('contact') || document.getElementById('executive-contact');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              return;
+            }
+            setCurrentView(view);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onOpenInquiry={() => handleOpenInquiry('Website Development')}
+        />
+      )}
 
       {/* Multi-step Glassmorphism Inquiry Modal Popup */}
       <InquiryModal
@@ -262,12 +350,8 @@ export default function App() {
         lang={lang}
       />
 
-      {/* Floating MONIX AI Assistant Button (Bottom Left) */}
-      <AIAssistantButton lang={lang} />
-
-      {/* Floating 1-Click WhatsApp Quick Action Button (Bottom Right) */}
-      <WhatsAppButton lang={lang} phoneNumber="919025087129" />
-
+      {/* Floating AURA AI Assistant Button */}
+      <FloatingAURAButton lang={lang} />
     </div>
   );
 }

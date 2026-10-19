@@ -3,53 +3,39 @@ import { CategoryDetail } from '../types';
 export const WHY_CHOOSE_US = [
   {
     icon: "Sparkles",
-    title: "Modern Designs",
-    desc: "Apple-level clean, pixel-perfect glassmorphism UIs with luxury white & gold aesthetics.",
+    title: "Apple-Grade Design",
+    desc: "Minimalist dark glassmorphism, pixel-perfect typography, and responsive micro-interactions.",
+    tag: "AESTHETICS"
   },
   {
-    icon: "BadgeIndianRupee",
-    title: "Affordable Pricing",
-    desc: "Transparent packages starting from ₹4,999* with zero hidden costs or extra charges.",
+    icon: "Zap",
+    title: "Sub-Second Speed",
+    desc: "100/100 Lighthouse performance, sub-200ms TTFB, and global edge CDN caching.",
+    tag: "PERFORMANCE"
   },
   {
     icon: "Cpu",
-    title: "AI Powered Workflow",
-    desc: "Automated coding pipelines, smart AI algorithms, and next-gen integration.",
+    title: "AI-Driven Code",
+    desc: "Autonomous multi-agent workflows, vector RAG pipelines, and automated test coverage.",
+    tag: "INTELLIGENCE"
   },
   {
     icon: "Clock",
     title: "On-Time Delivery",
-    desc: "Strict project milestones with guaranteed on-time launch commitments.",
-  },
-  {
-    icon: "Headphones",
-    title: "Professional Support",
-    desc: "1-Month free technical post-launch support & ongoing maintenance assistance.",
-  },
-  {
-    icon: "Smile",
-    title: "Customer Satisfaction",
-    desc: "100% revision commitment until your vision is perfectly materialized.",
+    desc: "Strict agile sprint milestones, live preview deployments, and zero launch delays.",
+    tag: "EXECUTION"
   },
   {
     icon: "ShieldCheck",
-    title: "Secure Development",
-    desc: "Enterprise-grade SSL encryption, XSS/CSRF protections, and secure headers.",
+    title: "Enterprise Security",
+    desc: "Zero-trust architecture, OWASP Top 10 compliance, and end-to-end 256-bit SSL encryption.",
+    tag: "SECURITY"
   },
   {
-    icon: "Search",
-    title: "SEO Friendly",
-    desc: "Rank high on Google with schema markup, fast page speed, and dynamic open graph tags.",
-  },
-  {
-    icon: "Smartphone",
-    title: "Mobile Optimized",
-    desc: "Flawless performance across desktops, laptops, tablets, and mobile devices.",
-  },
-  {
-    icon: "Layers",
-    title: "Latest Technologies",
-    desc: "Built using Next.js 16, TypeScript, React 19, Tailwind CSS v4, and modern cloud platforms.",
+    icon: "Headphones",
+    title: "Direct Support",
+    desc: "Dedicated senior engineering channel with under 2-hour SLA response and 30-day warranty.",
+    tag: "RELIABILITY"
   },
 ];
 
@@ -219,5 +205,120 @@ export const CATEGORY_DETAILS_MAP: Record<string, CategoryDetail> = {
     technologies: ["Python", "Machine Learning", "React", "Node.js", "Flutter", "Android", "Cloud"],
     process: ["Topic Selection & Synopsis Submission", "System Architecture & Coding", "Report & PPT Generation", "Code Explanation & Viva Demo", "Final Submission Support"],
     deliverables: ["Full Source Code ZIP", "Complete Documentation Report", "Presentation PPT", "Synopsis Document", "Installation Manual"]
+  },
+  "Healthcare & Medical Portals": {
+    id: "healthcare-medical-portals",
+    title: "Healthcare & Medical Portals (HIPAA Compliant)",
+    parentService: "projects",
+    subtitle: "AI disease prediction, EHR portals, and secure telehealth communication systems.",
+    overview: "Built to comply with strict HIPAA BAA and ISO 27799 healthcare data security standards. Features sub-45ms real-time telemetry streaming, EHR FHIR standards, and deep neural diagnostic classifiers.",
+    priceTag: "IEEE & University Certified",
+    features: [
+      "HIPAA Compliant Data Layer with AES-256 at Rest",
+      "FHIR HL7 Diagnostic Protocol Integration",
+      "AI Predictive Diagnostics for Clinical Decision Support",
+      "Live Encrypted Doctor-Patient Video Consultations (WebRTC)",
+      "50+ Page Academic Project Report & Complete Viva Preparation Deck"
+    ],
+    benefits: [
+      "Meets highest clinical compliance benchmark standards",
+      "Ready for university viva, conference publications, or startup launch",
+      "Complete hands-on AnyDesk remote installation support included"
+    ],
+    technologies: ["Next.js 15", "Python FastAPI", "TensorFlow", "PostgreSQL", "WebRTC", "Docker"],
+    process: ["Clinical Architecture Design", "FHIR Data Modeling", "AI Diagnostic Model Training", "EHR Portal Integration", "Verification & Viva Handover"],
+    deliverables: ["Full Source Code ZIP", "IEEE Base Paper & Report Document", "Viva Voce Prep Deck", "Installation Manual"]
+  },
+  "Security & Pentesting Defense": {
+    id: "security-pentesting-defense",
+    title: "Security & Pentesting Defense (Zero-Trust)",
+    parentService: "projects",
+    subtitle: "Automated penetration testing, zero-trust access, and live SOC telemetry monitoring.",
+    overview: "An enterprise-grade cybersecurity engineering suite designed to audit and defend against OWASP Top 10 web vulnerabilities. Features automated scanning agents, mTLS, JWT token rotation, and simulated SIEM attack analysis.",
+    priceTag: "Cybersecurity Research Grade",
+    features: [
+      "Automated Vulnerability Scanner CLI & Visual Dashboard",
+      "Zero-Trust Microsegmentation with FIDO2 / JWT Rotation",
+      "Simulated SOC Telemetry & Real-Time Threat Attack Matrix",
+      "MITRE ATT&CK Mapped Exploit Catalog and Remediation Guides",
+      "Comprehensive Exploitation Walkthrough & Viva Voce Q&A Sheet"
+    ],
+    benefits: [
+      "Exceptional showcase for cybersecurity internships and campus placements",
+      "Fully compliant with IEEE Security & Privacy standards",
+      "Demonstrable live attack-defense demonstration for university examiners"
+    ],
+    technologies: ["Python Scapy", "Go", "Docker", "Next.js 15", "OWASP ZAP Core", "WireGuard"],
+    process: ["Threat Modeling", "Scanner Agent Development", "Zero-Trust Identity Implementation", "Penetration Benchmark Testing", "Final Report Minting"],
+    deliverables: ["Full Source Code Repository", "50+ Page Vulnerability Audit Report", "Interactive Defense PPT", "Live Demo Guide"]
+  },
+  "Generative AI & Autonomous Agents": {
+    id: "generative-ai-autonomous-agents",
+    title: "Generative AI & Autonomous Agents (LLM • RAG)",
+    parentService: "projects",
+    subtitle: "Web-based LLMs, vector database search, and autonomous multi-agent task execution.",
+    overview: "Cutting-edge autonomous agent architecture combining Google Gemini models with LangChain, LangGraph, and hybrid vector RAG (Pinecone / pgvector). Features sub-120ms first token latency and responsible AI guardrails.",
+    priceTag: "GenAI & Agentic System",
+    features: [
+      "Multi-Agent Workflow Loop with Dynamic Memory & Tool Execution",
+      "Dense + Sparse Hybrid Vector Search with Cross-Encoder Re-Ranking",
+      "Modern Dark Cyber-Glass UI with Streaming SSE Responses",
+      "Automated Document Ingestion & Chunking Pipeline",
+      "IEEE 2025/2026 Research Paper Implementation & Viva Voce Deck"
+    ],
+    benefits: [
+      "High-impact capstone proving production-level AI engineering capabilities",
+      "Modular microservices architecture ready for cloud deployment",
+      "Zero vendor lock-in with swappable LLM endpoints"
+    ],
+    technologies: ["Google Gemini API", "LangChain", "Pinecone", "Next.js 15", "FastAPI", "Python"],
+    process: ["Prompt Architecture & Agent Design", "Vector DB Indexing", "Streaming API Proxy Setup", "Agentic Loop Tuning", "Viva Defense Preparation"],
+    deliverables: ["Complete Agent Source Code", "RAG Pipeline Configuration", "Research Report & Presentation", "Docker Compose Sandbox"]
+  },
+  "Next-Gen Cybersecurity & Ethical Hacking (Hands-on SOC Lab)": {
+    id: "cybersecurity-soc-lab-internship",
+    title: "Cybersecurity & Ethical Hacking (Virtual SOC Lab)",
+    parentService: "internship",
+    subtitle: "5 to 30 Days Online Tracks with Official Govt. of India MSME Certificate & ISO Verified QR.",
+    overview: "Immerse yourself in real-world cybersecurity engineering. Gain practical offensive and defensive skills on dedicated Kali Linux and Virtual SOC cloud sandboxes under the direct 1-on-1 mentorship of senior security engineers.",
+    duration: "5 Days Sprint / 15 Days Bootcamp / 30 Days Full Immersion",
+    features: [
+      "Dedicated Kali Linux & Virtual SOC Sandbox Cloud Pods",
+      "Hands-on OWASP Top 10 Web Exploitation & Remediation Labs",
+      "BurpSuite Pro, Wireshark, Metasploit, and Nmap Practical Tooling",
+      "Real-World Penetration Test Audit Report & GitHub Capstone Project",
+      "Verifiable Govt. of India MSME Certificate with Tamper-Proof QR Code"
+    ],
+    benefits: [
+      "Build a portfolio that stands out in top cybersecurity and SOC analyst hiring",
+      "Earn verifiable academic credits recognized by AICTE & major Indian universities",
+      "Official Letter of Recommendation (LOR) for top performers"
+    ],
+    technologies: ["Kali Linux", "BurpSuite", "Wireshark", "Metasploit", "Python", "OWASP ZAP", "Docker"],
+    process: ["Reconnaissance & Threat Modeling", "Vulnerability Exploitation Labs", "Defensive SOC & SIEM Logging", "Capstone Audit Delivery", "Certification & Career Mentorship"],
+    deliverables: ["Govt. MSME QR Certificate", "Official LOR", "Penetration Testing Audit Report", "GitHub Lab Portfolio"]
+  },
+  "Next-Gen Prompt Engineering & LLMs (LangChain & Vector RAG)": {
+    id: "prompt-engineering-llm-internship",
+    title: "Prompt Engineering & LLMs (LangChain & Vector RAG)",
+    parentService: "internship",
+    subtitle: "5 to 30 Days Online Tracks with Official Govt. of India MSME Certificate & ISO Verified QR.",
+    overview: "Master production GenAI engineering. Architect autonomous agents, evaluate RAG pipelines, and build production web apps integrated with Gemini and vector databases under lead AI architects.",
+    duration: "5 Days Sprint / 15 Days Bootcamp / 30 Days Full Immersion",
+    features: [
+      "High-Speed Gemini & HuggingFace Inference API Sandboxes",
+      "Advanced Prompt Engineering, Few-Shot & Chain-of-Thought Workflows",
+      "Enterprise Hybrid RAG Architecture with Pinecone & LangChain",
+      "Autonomous Multi-Agent Systems with LangGraph & Tool Calling",
+      "Verifiable Govt. of India MSME Certificate with Tamper-Proof QR Code"
+    ],
+    benefits: [
+      "Deploy two live AI applications to your personal portfolio",
+      "Master the most in-demand skills in the modern software industry",
+      "Direct 1-on-1 resume reviews and mock technical interview sessions"
+    ],
+    technologies: ["Google Gemini API", "LangChain", "Pinecone", "Next.js 15", "React 19", "Python", "FastAPI"],
+    process: ["Core Prompting Mastery", "Vector Embeddings & RAG", "Autonomous Agent Orchestration", "Capstone Launch on Vercel", "MSME Certification & Career Mentorship"],
+    deliverables: ["Govt. MSME QR Certificate", "Official LOR", "Live Deployed Project URL", "GitHub Source Code Repository"]
   }
 };

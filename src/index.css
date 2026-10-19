@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;600;700;800;900&family=Mukta+Malar:wght@600;700;800&display=swap');
+@import "tailwindcss";
 
 /* Tamil Mode Global Typography Overrides */
 body.lang-ta {
@@ -99,6 +99,48 @@ body.lang-ta .hero-subtitle {
   .gold-glow-lg {
     box-shadow: 0 0 50px rgba(212, 175, 55, 0.25);
   }
+
+  /* Dark Cyber-Enterprise Utilities (Obsidian #07090E, Glass Slate #111827/70, Cyan #00F2FE, Indigo #6366F1, White #F8FAFC) */
+  .cyber-glass {
+    background: rgba(17, 24, 39, 0.70);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(0, 242, 254, 0.16);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+  }
+
+  .cyber-glass-hover {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .cyber-glass-hover:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0, 242, 254, 0.5);
+    box-shadow: 0 20px 45px -15px rgba(0, 242, 254, 0.22);
+  }
+
+  .cyber-glow-cyan {
+    box-shadow: 0 0 25px rgba(0, 242, 254, 0.28);
+  }
+
+  .cyber-glow-indigo {
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.28);
+  }
+
+  .cyber-glow-emerald {
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.32);
+  }
+
+  .cyber-grid-pattern {
+    background-image: 
+      linear-gradient(to right, rgba(0, 242, 254, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 242, 254, 0.04) 1px, transparent 1px);
+    background-size: 36px 36px;
+  }
+
+  .cyber-dots-pattern {
+    background-image: radial-gradient(rgba(0, 242, 254, 0.12) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
 }
 
 @keyframes float {
@@ -111,29 +153,55 @@ body.lang-ta .hero-subtitle {
   100% { background-position: 200% 0; }
 }
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
 }
 
-.animate-shimmer {
-  background: linear-gradient(90deg, rgba(212,175,55,0) 0%, rgba(212,175,55,0.2) 50%, rgba(212,175,55,0) 100%);
-  background-size: 200% 100%;
-  animation: shimmer 3s infinite;
+@keyframes marquee-reverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
 }
 
-/* Custom Scrollbar */
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-reverse {
+  display: flex;
+  width: max-content;
+  animation: marquee-reverse 35s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee:hover,
+.animate-marquee-reverse:hover {
+  animation-play-state: paused;
+}
+
+/* Custom Cyber Scrollbar (Electric Cyan #00F2FE to Indigo #6366F1 on #0B0F19 track) */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #FAF8F5;
+  background: #0B0F19;
 }
 ::-webkit-scrollbar-thumb {
-  background: #D4AF37;
-  border-radius: 4px;
+  background: linear-gradient(180deg, #00F2FE 0%, #6366F1 100%);
+  border-radius: 9999px;
+  border: 1.5px solid #0B0F19;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #B8860B;
+  background: linear-gradient(180deg, #38BDF8 0%, #818CF8 100%);
+  box-shadow: 0 0 14px rgba(0, 242, 254, 0.6);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #00F2FE #0B0F19;
 }
 
 /* ===================================
@@ -349,8 +417,17 @@ html, body, * {
 
 /* Mobile Screen Adaptations & 100% Responsiveness */
 html, body {
+    width: 100%;
     max-width: 100vw;
     overflow-x: hidden;
+    background-color: #050B14;
+}
+
+@media (max-width: 768px) {
+    html, body {
+        touch-action: pan-y;
+        overscroll-behavior-y: none;
+    }
 }
 
 @media (max-width: 768px) {
@@ -385,4 +462,62 @@ html, body {
         font-size: 0.95rem !important;
     }
 }
+
+/* ===================================
+   DARK CYBER-ENTERPRISE UTILITIES
+   =================================== */
+.glow-cyan {
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.4);
+}
+.glow-indigo {
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.4);
+}
+.cyber-glass {
+  background: rgba(11, 15, 25, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-gradient {
+  background-size: 200% auto;
+  animation: gradientShift 5s ease infinite;
+}
+
+/* ====================================================
+   DIRECTIONAL SCROLL SNAPPING (Forward Snap, Free Reverse)
+   ==================================================== */
+html {
+  scroll-padding-top: 4.5rem;
+}
+
+html.snap-down {
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+}
+
+html:not(.snap-down) {
+  scroll-snap-type: none !important;
+}
+
+.snap-section {
+  scroll-snap-align: start;
+  scroll-margin-top: 4.5rem;
+}
+
+
+
+
 

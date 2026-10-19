@@ -1,0 +1,28 @@
+/* MONIX Cyber-Enterprise Global Stylesheet (globals.css) */
+@import "./index.css";
+
+/* Custom Cyber Scrollbar (Electric Cyan #00F2FE to Indigo #6366F1 on #0B0F19 track) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B0F19;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00F2FE 0%, #6366F1 100%);
+  border-radius: 9999px;
+  border: 1.5px solid #0B0F19;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #38BDF8 0%, #818CF8 100%);
+  box-shadow: 0 0 14px rgba(0, 242, 254, 0.6);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #00F2FE #0B0F19;
+}

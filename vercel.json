@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/services/:type", "destination": "/Portfolio/service-details.html" },
+    { "source": "/projects/:type", "destination": "/Portfolio/service-details.html" },
+    { "source": "/internships/:type", "destination": "/Portfolio/internship-details.html" },
+    { "source": "/service-details.html", "destination": "/Portfolio/service-details.html" },
+    { "source": "/internship-details.html", "destination": "/Portfolio/internship-details.html" },
+    { "source": "/(.*)", "destination": "/Portfolio/$1" }
+  ],
+  "headers": [
+    {
+      "source": "/Portfolio/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/(.*).(css|js|webp|png|jpg|svg|woff2)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ]
+}

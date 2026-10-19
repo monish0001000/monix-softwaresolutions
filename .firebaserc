@@ -1,0 +1,21 @@
+{
+  "projects": {
+    "default": "monix-portfolio"
+  },
+  "targets": {
+    "monix-softwaresolutions": {
+      "hosting": {
+        "softwaresolutions": [
+          "monix-softwaresolutions"
+        ]
+      }
+    },
+    "monix-portfolio": {
+      "hosting": {
+        "portfolio": [
+          "monix-portfolio"
+        ]
+      }
+    }
+  }
+}
